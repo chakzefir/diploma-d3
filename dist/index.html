@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>Getting Started</title>
+    <link rel="icon" href="./fav.ico">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<form action="" class="Settings">
+    <div class="form-line">
+        <label for="devices">Укажите количество устройств в сети</label>
+        <input type="number" id="devices" name="devices" max="20"/>
+    </div>
+    <div class="form-line">
+        <label for="topology">Выберите топологию</label>
+        <select id="topology" name="topology">
+            <option value="bus">Шина</option>
+            <option value="star">Звезда</option>
+        </select>
+    </div>
+    <div class="form__line">
+        <input type="submit" />
+    </div>
+</form>
+<svg></svg>
+<script src="main.js"></script>
+</body>
+</html>
