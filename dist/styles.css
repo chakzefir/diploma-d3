@@ -10,37 +10,51 @@ label, .label {
     margin: 5px 0;
     color: white;
 }
+/*accessibility*/
+input:focus, button:focus {
+    /*outline: 1px auto aqua;*/
+}
 input {
     background: transparent;
     border: none;
-    outline: aqua;
     font-size: 16px;
     font-family: inherit;
-    color: white;
+    color: #fff;
     font-weight: bold;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #fff;
 }
 input[name="devices"] {
     width: 40px;
 }
-input[type="submit"] {
+input[type="submit"], .nav-btn {
+    background: transparent;
+    border-width: 0 0 1px;
+    font-size: 16px;
+    font-family: inherit;
+    color: #fff;
+    border-color: #fff;
     cursor: pointer;
     padding: 5px 10px;
     transition: all 0.2s ease-in-out;
 }
-input[type="submit"]:hover {
+input[type="submit"]:hover, .nav-btn:hover {
     background: #fff;
     color: #1488ee;
 }
-.settings-modal {
+.nav-btn {
+    margin-top: 20px;
+}
+.modal {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background:rgba(20,136,238, 0.7);
+    background:rgba(20,136,238, 0.8);
+    color: white;
 }
-.Settings {
+.modal__container {
     position: absolute;
     left: 0;
     right: 0;
@@ -52,8 +66,13 @@ input[type="submit"]:hover {
     height: 200px;
     background: #1488ee;
 }
+address {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-size: 12px;
+}
 
 svg {
-    display: none;
     border: #1483ff dashed 2px;
 }

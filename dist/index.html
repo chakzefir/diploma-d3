@@ -7,26 +7,37 @@
 </head>
 <body>
 
-<div class="settings-modal">
-    <form action="" class="Settings">
-        <div class="form-line">
-            <label for="devices">Укажите количество устройств в сети:</label>
-            <input type="number" id="devices" name="devices" min="1" max="20" required/>
-        </div>
-        <div class="form-line">
-            <p class="label">Выберите топологию:</p>
-            <input type="radio" name="topology" id="star" value="star" required>
-            <label for="star">Звезда</label>
-            <br>
-            <input type="radio" name="topology" id="bus" value="bus">
-            <label for="bus">Шина</label>
-        </div>
-        <div class="form__line">
-            <input type="submit" value="Построить граф"/>
-        </div>
-    </form>
+<div class="modal modal--settings">
+    <div class="modal__container">
+        <form action="" class="Settings">
+            <div class="form-line">
+                <label for="devices">Укажите количество устройств в сети:</label>
+                <input type="number" id="devices" name="devices" min="1" max="20" required/>
+            </div>
+            <div class="form-line">
+                <p class="label">Выберите топологию:</p>
+                <input type="radio" name="topology" id="star" value="star" required>
+                <label for="star">Звезда</label>
+                <br>
+                <input type="radio" name="topology" id="bus" value="bus">
+                <label for="bus">Шина</label>
+            </div>
+            <div class="form__line">
+                <input type="submit" value="Построить граф"/>
+            </div>
+        </form>
+        <button data-modal="close">⚔️</button>
+    </div>
 </div>
-<svg></svg>
+<div class="modal modal--welcome">
+    <div class="modal__container">
+        <h3>Добро пожаловать!</h3>
+        <p>Приложение разработано для моделирования построения простейшей ВОЛС в учебных целях.</p>
+        <button class="nav-btn" data-modal="close">К приложению ➡</button>
+    </div>
+</div>
+<svg width="0" height="0"></svg>
+<address><a href="mailto:chakzefir@hotmail.com?subject=Diploma App">Feedback</a></address>
 <script src="main.js"></script>
 </body>
 </html>

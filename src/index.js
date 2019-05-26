@@ -1,40 +1,39 @@
 import _ from 'lodash'
-import Force from './modules/Force.js'
+
+import Modal from "./modules/ModalView"
+import Settings from "./modules/Settings"
+import Force from "./modules/Force"
 
 class App {
-    dataGenerator(qty = 3, topology = 'star') {
-        let linksArray = [];
-        let nodesArray = [{id: 'Server', group: 1}];
+    run(debug = false) {
+        console.info('APP RUN');
+        const settingsModalNode = document.querySelector('.modal--settings');
+        const welcomeModalNode = document.querySelector('.modal--welcome');
 
-        for(let i = 0; i < qty; i++) {
-            let currentTarget = i === 0 || topology === 'star' ? 'Server' : `Client${Number(i-1)}`;
+        this.settingsModal = new Modal(settingsModalNode);
+        this.welcomeModal = new Modal(welcomeModalNode, () => settingsModal.open());
 
-            linksArray.push({source: `Client${i}`,target: currentTarget})
-            nodesArray.push({id: `Client${i}`, group: 2})
+        document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
+
+        if(debug) {
+            this.settingsModal.open();
+        } else {
+            this.welcomeModal.open();
         }
-
-        return {
-            'links': linksArray,
-            'nodes': nodesArray
-        }
-    }
-    bindEvents() {
-        const formNode = document.forms[0];
-
-        formNode.addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
     }
     formHandler(submitEvent) {
-        submitEvent.preventDefault();
         console.info('SETTINGS SUBMITTED');
-    }
-    run() {
-        console.info('APP RUN');
-        this.bindEvents();
-        // const force = new Force(this.dataGenerator(11));
+        submitEvent.preventDefault();
+
+        const settings = Settings.getSettingsFromForm(submitEvent.target);
+        const data = Settings.dataGenerator(settings.devicesQty, settings.topology);
+        const force = new Force(data)
+
+        this.settingsModal.close();
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
-    app.run();
+    app.run(true);
 })
