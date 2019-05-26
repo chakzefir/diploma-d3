@@ -4,6 +4,7 @@ class Force {
 	constructor (data = {}) {
         // this.staticForce(data);
         this.simulationForce(data);
+        // this.oldSchoolForce(data)
 	}
 	getData() {
 		const data = d3.json("https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json");
@@ -50,22 +51,15 @@ class Force {
             .on("end", dragended);
     }
   	simulationForce(data) {
-		const height = 600;
-		const width = 600;
-		const svg = d3.select(document.querySelector("svg"))
+		const width = 1024;
+        const height = 768;
+        const svg = d3.select(document.querySelector("svg"))
 			.attr("width", width)
 			.attr("height", height);
 		const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
   		const links = data.links.map(d => Object.create(d));
 		const nodes = data.nodes.map(d => Object.create(d));
-
-		// const simulation = d3.forceSimulation(nodes)
-         //    .force("charge", d3.forceManyBody())
-		// 	.force("link", d3.forceLink(links).id(d => d.id).distance(30))
-		// 	// .force("center", d3.forceCenter(width / 2, height / 2))
-         //    .stop()
-		// 	;
 
         const simulation = d3.forceSimulation(nodes)
             .force("charge", d3.forceManyBody().strength(-100))
@@ -102,7 +96,7 @@ class Force {
             .text(d => d.id);
 
         // link.append("title")
-        //     .text(d => console.log(d))
+        //     .text(d => d.id)
 
         simulation.on("tick", () => {
             link
