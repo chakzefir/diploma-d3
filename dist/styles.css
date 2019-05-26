@@ -1,3 +1,59 @@
+body {
+    margin: 0;
+    font-family: "Courier New", "Arial", sans-serif;
+}
+.form-line {
+    margin: 30px 0;
+}
+label, .label {
+    font-size: 16px;
+    margin: 5px 0;
+    color: white;
+}
+input {
+    background: transparent;
+    border: none;
+    outline: aqua;
+    font-size: 16px;
+    font-family: inherit;
+    color: white;
+    font-weight: bold;
+    border-bottom: 1px solid white;
+}
+input[name="devices"] {
+    width: 40px;
+}
+input[type="submit"] {
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: all 0.2s ease-in-out;
+}
+input[type="submit"]:hover {
+    background: #fff;
+    color: #1488ee;
+}
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:rgba(20,136,238, 0.7);
+}
 .Settings {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    padding: 20px 60px 60px;
+    width: 400px;
+    height: 200px;
+    background: #1488ee;
+}
+
+svg {
     display: none;
+    border: #1483ff dashed 2px;
 }
