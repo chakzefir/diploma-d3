@@ -75,10 +75,11 @@ class Force {
             .selectAll("line")
             .data(links)
             .join("line")
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y)
+            .attr("length", d => this.getLineLength(d));
 
         const node = g.append("g")
             .attr("stroke", "#fff")
@@ -88,8 +89,8 @@ class Force {
             .join("circle")
             .attr("r", 10)
             .attr("fill", this.color)
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; })
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
             .call(this.dragAction(simulation));
 
         node.append("title")

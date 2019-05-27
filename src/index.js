@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Modal from "./modules/ModalView"
 import Settings from "./modules/Settings"
 import Force from "./modules/Force"
+import Calc from "./modules/Calc"
 
 class App {
     run(debug = false) {
@@ -14,9 +15,13 @@ class App {
         this.welcomeModal = new Modal(welcomeModalNode, () => settingsModal.open());
 
         document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
+        document.querySelector('.calc').addEventListener('click', () => {
+            Calc.view();
+        })
 
         if(debug) {
-            this.settingsModal.open();
+            // this.settingsModal.open();
+            new Force(Settings.dataGenerator(3))
         } else {
             this.welcomeModal.open();
         }

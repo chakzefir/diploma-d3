@@ -73,6 +73,19 @@ address {
     font-size: 12px;
 }
 
+.tools {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+}
+
+.calc {
+    cursor: pointer;
+    background: url("./img/calc.png") center/cover;
+    width: 30px;
+    height: 30px;
+}
+
 svg {
     border: #1483ff dashed 2px;
 }
