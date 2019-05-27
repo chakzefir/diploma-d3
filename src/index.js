@@ -12,7 +12,7 @@ class App {
         const welcomeModalNode = document.querySelector('.modal--welcome');
 
         this.settingsModal = new Modal(settingsModalNode);
-        this.welcomeModal = new Modal(welcomeModalNode, () => settingsModal.open());
+        this.welcomeModal = new Modal(welcomeModalNode, () => this.settingsModal.open());
 
         document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
         document.querySelector('.calc').addEventListener('click', () => {
@@ -20,8 +20,8 @@ class App {
         })
 
         if(debug) {
-            // this.settingsModal.open();
-            new Force(Settings.dataGenerator(3))
+            this.settingsModal.open();
+            // new Force(Settings.dataGenerator(3))
         } else {
             this.welcomeModal.open();
         }
@@ -40,5 +40,5 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
-    app.run(true);
+    app.run();
 })
