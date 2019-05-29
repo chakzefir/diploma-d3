@@ -53,6 +53,7 @@ input[type="submit"]:hover, .nav-btn:hover {
     bottom: 0;
     background:rgba(20,136,238, 0.8);
     color: white;
+    z-index: 5;
 }
 .modal__container {
     position: absolute;
@@ -66,24 +67,50 @@ input[type="submit"]:hover, .nav-btn:hover {
     height: 200px;
     background: #1488ee;
 }
+.modal__btn-close {
+    border: 0;
+    background: url("./img/close-3.png") center/cover transparent;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    cursor: pointer;
+    transition: background ease-out 0.14s;
+}
+.modal__btn-close:hover {
+    background-image: url("./img/close-2.png");
+}
 address {
     position: absolute;
     right: 5px;
     bottom: 5px;
     font-size: 12px;
+    z-index: 6;
 }
 
-.tools {
+.tools-container {
     position: absolute;
     top: 20px;
-    left: 40px;
+    left: 0;
+    padding: 0 40px;
+    width: 1024px;
+    box-sizing: border-box;
 }
 
-.calc {
+.tool {
     cursor: pointer;
-    background: url("./img/calc.png") center/cover;
     width: 30px;
     height: 30px;
+}
+
+.tool--calc {
+    background: url("./img/calc.png") center/cover;
+}
+.tool--settings {
+    position: absolute;
+    right: 40px;
+    background: url("./img/settings.png") center/cover;
 }
 
 svg {

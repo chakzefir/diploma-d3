@@ -1,5 +1,5 @@
 class Calc {
-    static countNodesDistance() {
+    countNodesDistance() {
         const lines = document.querySelectorAll('line');
         let sum = 0;
 
@@ -9,17 +9,28 @@ class Calc {
 
         return sum;
     }
-    countCash() {
-
-    }
-    static view() {
+    countCash(length) {
         const priceForMeter = 8.2;
-        const length = Calc.countNodesDistance();
 
-        const finalCash =  priceForMeter * length;
+        return priceForMeter * length;
+    }
+    countBudget(length, clientsQty) {
+        const speedLoss = 0.5;
+        const connectionLoss = 0.5;
 
-        document.querySelector('.calc__result').innerHTML = `С учётом общей длинны кабеля для всех абонентов (${parseInt(length)}м), примерная сумма составит ~ ${parseInt(finalCash)}₽`;
-        console.log(length);
+        return speedLoss * length + connectionLoss * clientsQty;
+    }
+    view(clientsQty) {
+        const length = this.countNodesDistance();
+        const finalCash =  this.countCash(length);
+        const loss = this.countBudget(length, clientsQty);
+
+        document.querySelector('.calc-result').innerHTML =
+            `Общая длинна кабеля всех магистралей: ${parseInt(length)}м<br> 
+            Примерная стоимость кабелей ~ ${parseInt(finalCash)}₽<br>
+            Количество абонентов: ${clientsQty}<br>
+            Бюджет сети составит ~ ${parseInt(loss)}Дб
+            `;
     }
 }
 

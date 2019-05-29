@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import Node from './Node'
 
 class Force {
 	constructor (data = {}) {
@@ -24,6 +25,13 @@ class Force {
   		}
   		return 'Green'
   	}
+  	type(d) {
+        if(d.id !== 'Server') {
+            return 'node node--client node--client-' + d.index
+        }
+        return 'node node--server'
+
+    }
     getLineLength(d) {
         return Math.sqrt(Math.pow(d.target.x - d.source.x, 2) + Math.pow(d.target.y - d.source.y, 2))
     }
@@ -50,12 +58,17 @@ class Force {
             .on("drag", dragged)
             .on("end", dragended);
     }
+    clickAction(d) {
+	    const coords = d3.mouse(document.body);
+
+	    Node.appendAlt(d, coords)
+    }
   	simulationForce(data) {
 		const width = 1024;
         const height = 768;
-        const svg = d3.select(document.querySelector("svg"))
-			.attr("width", width)
-			.attr("height", height);
+        const svg = d3.select("body").append("svg");
+        svg.attr("width", width);
+        svg.attr("height", height);
 		const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
   		const links = data.links.map(d => Object.create(d));
@@ -79,7 +92,8 @@ class Force {
             .attr("y1", d => d.source.y)
             .attr("x2", d => d.target.x)
             .attr("y2", d => d.target.y)
-            .attr("length", d => this.getLineLength(d));
+            .attr("length", d => this.getLineLength(d))
+        ;
 
         const node = g.append("g")
             .attr("stroke", "#fff")
@@ -89,6 +103,7 @@ class Force {
             .join("circle")
             .attr("r", 10)
             .attr("fill", this.color)
+            .attr("class", this.type)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
             .call(this.dragAction(simulation));

@@ -1,5 +1,3 @@
-import Force from './Force'
-
 class Settings {
     static dataGenerator(qty = 3, topology = 'star') {
         let linksArray = [];

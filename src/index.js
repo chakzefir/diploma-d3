@@ -15,13 +15,11 @@ class App {
         this.welcomeModal = new Modal(welcomeModalNode, () => this.settingsModal.open());
 
         document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
-        document.querySelector('.calc').addEventListener('click', () => {
-            Calc.view();
-        })
 
         if(debug) {
-            this.settingsModal.open();
-            // new Force(Settings.dataGenerator(3))
+            new Force(Settings.dataGenerator(3))
+            const nodes = new Node();
+            this.initTools()
         } else {
             this.welcomeModal.open();
         }
@@ -29,16 +27,38 @@ class App {
     formHandler(submitEvent) {
         console.info('SETTINGS SUBMITTED');
         submitEvent.preventDefault();
+        this.clearBody();
 
         const settings = Settings.getSettingsFromForm(submitEvent.target);
         const data = Settings.dataGenerator(settings.devicesQty, settings.topology);
         const force = new Force(data)
+        const nodes = new Node();
 
         this.settingsModal.close();
+        this.initTools();
+    }
+    initTools() {
+        this.calc = new Calc()
+
+        document.querySelector('.tool--calc').addEventListener('click', () => {
+            let clientsQty = document.querySelectorAll('.node--client').length;
+            this.calc.view(clientsQty);
+        })
+
+        document.querySelector('.tool--settings').addEventListener('click', () => {
+            this.settingsModal.open();
+        })
+    }
+    clearBody() {
+        let svgNode = document.querySelector('svg');
+
+        if(svgNode) {
+            document.body.removeChild(svgNode);
+        }
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
-    app.run();
+    app.run(false);
 })
