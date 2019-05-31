@@ -4,6 +4,7 @@ import Modal from "./modules/ModalView"
 import Settings from "./modules/Settings"
 import Force from "./modules/Force"
 import Calc from "./modules/Calc"
+import Node from "./modules/Node"
 
 class App {
     run(debug = false) {
@@ -60,5 +61,5 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
-    app.run(false);
+    app.run(true);
 })

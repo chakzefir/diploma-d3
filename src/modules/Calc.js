@@ -24,13 +24,17 @@ class Calc {
         const length = this.countNodesDistance();
         const finalCash =  this.countCash(length);
         const loss = this.countBudget(length, clientsQty);
+        const resultNode = document.createElement("DIV");
 
-        document.querySelector('.calc-result').innerHTML =
-            `Общая длинна кабеля всех магистралей: ${parseInt(length)}м<br> 
-            Примерная стоимость кабелей ~ ${parseInt(finalCash)}₽<br>
+        resultNode.classList.add('calc-result');
+        resultNode.innerHTML =
+            `<h3>Результаты рассчётов</h3>
+            Общая длинна кабеля всех магистралей: <b>${parseInt(length)}м</b><br> 
+            Примерная стоимость кабелей ~ <b>${parseInt(finalCash)}₽</b><br>
             Количество абонентов: ${clientsQty}<br>
-            Бюджет сети составит ~ ${parseInt(loss)}Дб
-            `;
+            Бюджет сети составит ~ <b>${parseInt(loss)}Дб</b>`;
+
+        document.body.appendChild(resultNode);
     }
 }
 

@@ -64,7 +64,7 @@ class Force {
 	    Node.appendAlt(d, coords)
     }
   	simulationForce(data) {
-		const width = 1024;
+		const width = 920;
         const height = 768;
         const svg = d3.select("body").append("svg");
         svg.attr("width", width);
@@ -104,6 +104,7 @@ class Force {
             .attr("r", 10)
             .attr("fill", this.color)
             .attr("class", this.type)
+            .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
             .call(this.dragAction(simulation));
