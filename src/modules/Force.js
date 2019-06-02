@@ -58,18 +58,28 @@ class Force {
             .on("drag", dragged)
             .on("end", dragended);
     }
-    clickAction(d) {
-	    const coords = d3.mouse(document.body);
+    clickAction(d, width, height) {
+        if(d.id !== 'Server') {
+            Node.appendAlt(d, width, height)
+        }
+    }
+    addNewClientNode(d, i){
+        //simulation.find() - TODO check
 
-	    Node.appendAlt(d, coords)
+	    this.simulation.nodes.push({
+            id: `Client${i}`,
+            group: d.group,
+        })
     }
   	simulationForce(data) {
-		const width = 920;
+		let active = d3.select(null);
+	    const width = 920;
         const height = 768;
-        const svg = d3.select("body").append("svg");
+        const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
         svg.attr("width", width);
         svg.attr("height", height);
-		const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+        svg.attr("tabindex", 1);
+        const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
   		const links = data.links.map(d => Object.create(d));
 		const nodes = data.nodes.map(d => Object.create(d));
@@ -78,6 +88,7 @@ class Force {
             .force("charge", d3.forceManyBody().strength(-100))
             .force("link", d3.forceLink(links).id(d => d.id).distance(50))
             .stop();
+        this.simulation = simulation;
 
         for (let i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
             simulation.tick();
@@ -104,9 +115,11 @@ class Force {
             .attr("r", 10)
             .attr("fill", this.color)
             .attr("class", this.type)
+            .attr("id", d => d.id)
             .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
+            .on("click", d => this.clickAction(d, width, height))
             .call(this.dragAction(simulation));
 
         node.append("title")

@@ -6,8 +6,8 @@ class Settings {
         for(let i = 0; i < qty; i++) {
             let currentTarget = i === 0 || topology === 'star' ? 'Server' : `Client${Number(i-1)}`;
 
-            linksArray.push({source: `Client${i}`,target: currentTarget})
-            nodesArray.push({id: `Client${i}`, group: 2})
+            linksArray.push({source: `Main${i}`,target: currentTarget})
+            nodesArray.push({id: `Main${i}`, group: i})
         }
 
         return {

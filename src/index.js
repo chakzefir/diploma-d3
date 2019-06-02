@@ -4,7 +4,6 @@ import Modal from "./modules/ModalView"
 import Settings from "./modules/Settings"
 import Force from "./modules/Force"
 import Calc from "./modules/Calc"
-import Node from "./modules/Node"
 
 class App {
     run(debug = false) {
@@ -19,7 +18,6 @@ class App {
 
         if(debug) {
             new Force(Settings.dataGenerator(3))
-            const nodes = new Node();
             this.initTools()
         } else {
             this.welcomeModal.open();
@@ -33,7 +31,6 @@ class App {
         const settings = Settings.getSettingsFromForm(submitEvent.target);
         const data = Settings.dataGenerator(settings.devicesQty, settings.topology);
         const force = new Force(data)
-        const nodes = new Node();
 
         this.settingsModal.close();
         this.initTools();

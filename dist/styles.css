@@ -129,7 +129,7 @@ svg {
 }
 .node-alt {
     position: absolute;
-    padding: 0 8px;
+    padding: 0 8px 4px;
     background: rgba(214, 214, 224, 0.78);
     font-size: 14px;
 }
@@ -143,6 +143,7 @@ svg {
     border-color: #000;
 }
 .node-alt__add-fiber {
+    display: block;
     cursor: pointer;
     width: 30px;
     height: 30px;
