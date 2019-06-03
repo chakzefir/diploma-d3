@@ -16,7 +16,7 @@ class Node {
         input.setAttribute("tabindex", 1);
         div.className = "node-alt";
         addBtn.className = "node-alt__add-fiber";
-        addBtn.onclick = Node.fiberAddAction;
+        addBtn.onclick = (clickEvent, d, g) => Node.clientAddAction(clickEvent, d, g);
         div.style.top = d.y+10+'px';
         div.style.left = d.x+10+'px';
         div.style.transform = `translate(${svgWidth/2}px, ${svgHeight/2}px)`;
@@ -32,16 +32,18 @@ class Node {
             document.body.removeChild(altNode);
         }
     }
-    static nodeText(index, fiberQty = 4){
+    static mainAltHTML(index, fiberQty = 4) {
         return `
             <h3>Настройка магистрали</h3>
             <p>Магистраль №${index}</p>
             <p>Количество жил: <input value="${fiberQty}" type="number" class="node-alt__input" pattern="" step="4"/></p>
         `
     }
-    static fiberAddAction(clickEvent) {
-        clickEvent.preventDefault();
-        console.log(clickEvent.target)
+    static clientAltHTML(index, fiberQty = 4) {
+        return `
+            <h3>Сведения клиента</h3>
+            <p>Клиент №${index}</p>
+        `
     }
 }
 

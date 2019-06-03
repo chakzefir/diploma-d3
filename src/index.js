@@ -39,7 +39,7 @@ class App {
         this.calc = new Calc()
 
         document.querySelector('.tool--calc').addEventListener('click', () => {
-            let clientsQty = document.querySelectorAll('.node--client').length;
+            let clientsQty = document.querySelectorAll('.node--main').length;
             this.calc.view(clientsQty);
         })
 
