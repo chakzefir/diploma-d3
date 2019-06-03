@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import Modal from "./modules/ModalView"
 import Settings from "./modules/Settings"
 import Force from "./modules/Force"
