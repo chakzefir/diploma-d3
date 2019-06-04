@@ -113,17 +113,6 @@ address {
 .tool--settings {
     background: url("./img/settings.png") center/cover;
 }
-svg {
-    border: #1483ff dashed 2px;
-    display: inline-block;
-    vertical-align: top;
-}
-.calc-result {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 20px;
-}
-
 .node {
     cursor: pointer;
 }
@@ -151,4 +140,13 @@ svg {
 }
 .node-alt__add-fiber:hover {
     background-image: url("./img/plus-3.png");
+}
+
+svg {
+    border: #1483ff dashed 2px;
+    float: left;
+}
+
+.results {
+    float: right;
 }

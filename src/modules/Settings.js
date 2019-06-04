@@ -7,7 +7,7 @@ class Settings {
             let currentTarget = i === 0 || topology === 'star' ? 'Server' : `Main${Number(i-1)}`;
 
             linksArray.push({source: `Main${i}`,target: currentTarget})
-            nodesArray.push({id: `Main${i}`, group: i, fiberQty: 4})
+            nodesArray.push({id: `Main${i}`, group: i, fiberQty: 4, clientsQty: 0})
         }
 
         return {

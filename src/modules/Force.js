@@ -5,7 +5,6 @@ class Force {
 	constructor (data = {}) {
         this.width = 920;
         this.height = 768;
-        this.clientQty = 0;
         this.prepareSvg(data);
         this.runSimulation();
 
@@ -63,37 +62,45 @@ class Force {
             .on("drag", dragged)
             .on("end", dragended);
     }
-    nodeClickAction(d) {
+    contextMenuAction(d) {
         d3.event.preventDefault();
 
         if(d.id.indexOf('Client') > -1) {
-            this.appendClientAlt(d)
+            Node.appendClientAlt(d)
         } else if (d.id.indexOf('Main') > -1) {
             Node.appendMainAlt(d)
         }
     }
     addClient(d, i) {
-        const thisId = `Client${this.clientQty}`;
-        const thisGroup = this.nodes[i].group;
-        const sourceId = this.nodes[i].id;
-        const clientsLimit = this.nodes[i].fiberQty;
-        const clientsQty = Node.getClientsQty(this.nodes, thisGroup)
+        const thisGroup = d.group;
+        const sourceId = d.id;
+        const clientsLimit = d.fiberQty;
+        const clientsQty = d.clientsQty;
+        // const clientsQty = Node.getClientsQty(this.nodes, thisGroup)
 
-	    if(d.id.indexOf('Main') < 0 || clientsQty === clientsLimit){return}
-        // if(thisGroup){return}
+	    if(d.id.indexOf('Main') < 0 || clientsQty === clientsLimit){
+	        return
+	    } else if(d.id.indexOf('Main') > -1) {
+            d.clientsQty += 1;
+        }
 
+        const clientNumber = `${d.index}.${d.clientsQty}`;
 
         this.nodes.push({
-            id: thisId,
+            id: `Client${clientNumber}`,
             group: thisGroup,
+            number: clientNumber,
         });
 
         this.links.push({
             source: sourceId,
-            target: thisId,
+            target: `Client${clientNumber}`,
         });
+
         this.simulation.stop();
         this.runSimulation();
+
+        return d;
     }
     appendClientAlt(d) {
         let div = document.createElement("DIV")
@@ -117,20 +124,6 @@ class Force {
         //     this.clientAddAction(clickEvent, mainNodeParams)
         // };
         // div.appendChild(addBtn);
-    }
-    appendMainAlt(d) {
-        let div = document.createElement("DIV")
-        let input = document.createElement("INPUT")
-        let divNode;
-        // let addBtn = document.createElement("A")
-
-        div.setAttribute("tabindex", -1);
-        input.setAttribute("tabindex", 1);
-        div.className = "node-alt";
-        div.style.top = d.y+10+'px';
-        div.style.left = d.x+10+'px';
-        div.innerHTML = Node.mainAltHTML(d.index);
-
     }
   	prepareSvg(data) {
         const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
@@ -180,7 +173,7 @@ class Force {
             .attr("cy", d => d.y)
             .attr("fiberQty", d => d.fiberQty)
             .on("dblclick", (d, i) => this.addClient(d, i))
-            .on("contextmenu", d => this.nodeClickAction(d, this.width, this.height))
+            .on("contextmenu", d => this.contextMenuAction(d, this.width, this.height))
             .call(this.dragAction(simulation));
 
         // node.append("title")

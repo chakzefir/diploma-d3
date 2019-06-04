@@ -1,14 +1,6 @@
 import * as d3 from 'd3';
 
 class Node {
-    clickHandler(clickEvent){
-        let coords = {
-            Y: clickEvent.clientY,
-            X: clickEvent.clientX,
-        }
-
-        this.appendAlt(coords, clickEvent.toElement.attributes)
-    }
     static removeOldAlts() {
         let altNode = document.querySelector('.node-alt')
         if(altNode) {
@@ -37,14 +29,20 @@ class Node {
 
         d3.select('.node-alt').node().focus();
     }
+    static appendClientAlt(d) {
+        Node.removeOldAlts();
+
+        d3.select('body')
+            .append('div')
+            .attr('class', 'node-alt')
+            .attr('tabindex', -1)
+            .attr('style', `top: ${d.y+10}px; left: ${d.x+10}px`)
+            .html(`<h3>Сведения клиента</h3><p>Клиент №${d.number}</p>`)
+
+        d3.select('.node-alt').node().focus();
+    }
     static nodeChangeFiber(d, newFiberQty) {
         d3.select(`#${d.id}`).attr('fiberQty', newFiberQty);
-    }
-    static clientAltHTML(index) {
-        return `
-            <h3>Сведения клиента</h3>
-            <p>Клиент №${index}</p>
-        `
     }
     static getClientsQty(nodes, group) {
         let result = []
