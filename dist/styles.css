@@ -110,7 +110,6 @@ address {
 
 .tool--calc {
     background: url("./img/calc.png") center/cover;
-    display: none;
 }
 .tool--settings {
     background: url("./img/settings.png") center/cover;
