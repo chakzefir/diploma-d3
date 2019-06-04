@@ -15,7 +15,7 @@ class App {
         document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
 
         if(debug) {
-            new Force(Settings.dataGenerator(3))
+            new Force(Settings.dataGenerator(3, 'star', 3))
             this.initTools()
         } else {
             this.welcomeModal.open();
@@ -43,6 +43,10 @@ class App {
 
         document.querySelector('.tool--settings').addEventListener('click', () => {
             this.settingsModal.open();
+        })
+
+        document.querySelector('.tool--map').addEventListener('click', () => {
+            Settings.toggleMap();
         })
     }
     clearBody() {

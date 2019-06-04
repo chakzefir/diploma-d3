@@ -3,10 +3,12 @@ import Node from './Node'
 
 class Force {
 	constructor (data = {}) {
-        // this.staticForce(data);
-        this.clientQty = 0;
+        this.width = 768;
+        this.height = 768;
         this.prepareSvg(data);
         this.runSimulation();
+
+        // this.staticForce(data);
         // this.oldSchoolForce(data)
 	}
 	loading(svg) {
@@ -60,51 +62,41 @@ class Force {
             .on("drag", dragged)
             .on("end", dragended);
     }
-    nodeClickAction(d) {
+    contextMenuAction(d) {
+        d3.event.preventDefault();
+
         if(d.id.indexOf('Client') > -1) {
-            this.appendClientAlt(d)
+            Node.appendClientAlt(d)
         } else if (d.id.indexOf('Main') > -1) {
-            this.appendMainAlt(d)
+            Node.appendMainAlt(d)
         }
     }
-    clientAddAction(d, i) {
-        console.log(this.nodes[i])
-        const thisId = `Client`;
-        const thisGroup = this.nodes[i].group;
-        const sourceId = this.nodes[i].id;
-
-        this.nodes = this.nodes.concat({
-            id: thisId,
-            group: thisGroup
-        });
-
-        this.links = this.links.concat({
-            source: sourceId,
-            target: thisId
-        });
-
-        console.log(this.nodes)
-        console.log(this.links)
-
-        this.simulation.tick();
-    }
     addClient(d, i) {
-        if(d.id.indexOf('Main') < 0){return}
+        const thisGroup = d.group;
+        const sourceId = d.id;
+        const clientsLimit = d.fiberQty;
+        const clientsQty = d.clientsQty;
+        // const clientsQty = Node.getClientsQty(this.nodes, thisGroup)
 
-        const thisId = `Client${this.clientQty}`;
-        const thisGroup = this.nodes[i].group;
-        const sourceId = this.nodes[i].id;
+	    if(d.id.indexOf('Main') < 0 || clientsQty === clientsLimit){
+	        return
+	    } else if(d.id.indexOf('Main') > -1) {
+            d.clientsQty += 1;
+        }
+
+        const clientNumber = `${d.index}.${d.clientsQty}`;
 
         this.nodes.push({
-            id: thisId,
+            id: `Client${clientNumber}`,
             group: thisGroup,
+            number: clientNumber,
         });
-        this.clientQty+=1;
 
         this.links.push({
             source: sourceId,
-            target: thisId,
+            target: `Client${clientNumber}`,
         });
+
         this.simulation.stop();
         this.runSimulation();
     }
@@ -131,47 +123,21 @@ class Force {
         // };
         // div.appendChild(addBtn);
     }
-    appendMainAlt(d) {
-        let div = document.createElement("DIV")
-        let input = document.createElement("INPUT")
-        let divNode;
-        // let addBtn = document.createElement("A")
-
-        div.setAttribute("tabindex", -1);
-        input.setAttribute("tabindex", 1);
-        div.className = "node-alt";
-        div.style.top = d.y+10+'px';
-        div.style.left = d.x+10+'px';
-        div.innerHTML = Node.mainAltHTML(d.index);
-
-        Node.removeOldAlts();
-        divNode = document.body.appendChild(div);
-        divNode.focus();
-
-        // addBtn.className = "node-alt__add-fiber";
-        // addBtn.onclick = (clickEvent) => {
-        //     this.clientAddAction(clickEvent, mainNodeParams)
-        // };
-        // div.appendChild(addBtn);
-    }
   	prepareSvg(data) {
-	    const width = 920;
-        const height = 768;
         const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
-        svg.attr("width", width);
-        svg.attr("height", height);
+        svg.attr("width", this.width);
+        svg.attr("height", this.height);
         svg.attr("tabindex", 1);
 
-        this.svgG = svg.append("g")
+        this.svgGlines = svg.append("g").attr('class', 'lines');
+        this.svgGnodes = svg.append("g").attr('class', 'nodes');
         this.nodes = data.nodes;
         this.links = data.links;
   	}
   	runSimulation() {
-        const width = 920;
-        const height = 768;
         const simulation = d3.forceSimulation(this.nodes)
             .force("charge", d3.forceManyBody().strength(-100))
-            .force("centering", d3.forceCenter(width/2, height/2))
+            .force("centering", d3.forceCenter(this.width/2, this.height/2))
             // .force("collision",d3.forceCollide(40).strength(0.1))
             .force("link", d3.forceLink(this.links).id(d => d.id).distance(50).strength(0.1))
             .stop();
@@ -181,7 +147,7 @@ class Force {
             simulation.tick();
         }
 
-        const link = this.svgG
+        const link = this.svgGlines
             .selectAll("line")
             .data(this.links)
             .join("line")
@@ -192,23 +158,24 @@ class Force {
             .attr("y2", d => d.target.y)
             .attr("length", d => this.getLineLength(d));
 
-        const node = this.svgG
+        const node = this.svgGnodes
             .selectAll("circle")
             .data(this.nodes)
             .join("circle")
-            .attr("r", 10)
+            .attr("r", 7)
             .attr("fill", this.color)
             .attr("class", this.class)
             .attr("id", d => d.id)
             .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
+            .attr("fiberQty", d => d.fiberQty)
             .on("dblclick", (d, i) => this.addClient(d, i))
-            .on("click", d => this.nodeClickAction(d, width, height))
+            .on("contextmenu", d => this.contextMenuAction(d, this.width, this.height))
             .call(this.dragAction(simulation));
 
         // node.append("title")
-        //         .text(d => d.id);
+        //     .text(d => d.id);
 
         // link.append("title")
         //     .text(d => d.id)
