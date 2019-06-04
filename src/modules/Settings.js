@@ -1,13 +1,13 @@
 class Settings {
     static dataGenerator(qty = 3, topology = 'star') {
         let linksArray = [];
-        let nodesArray = [{id: 'Server', group: 1}];
+        let nodesArray = [{id: 'Server'}];
 
         for(let i = 0; i < qty; i++) {
-            let currentTarget = i === 0 || topology === 'star' ? 'Server' : `Client${Number(i-1)}`;
+            let currentTarget = i === 0 || topology === 'star' ? 'Server' : `Main${Number(i-1)}`;
 
             linksArray.push({source: `Main${i}`,target: currentTarget})
-            nodesArray.push({id: `Main${i}`, group: i})
+            nodesArray.push({id: `Main${i}`, group: i, fiberQty: 4})
         }
 
         return {

@@ -3,13 +3,14 @@ import Node from './Node'
 
 class Force {
 	constructor (data = {}) {
+        this.width = 920;
+        this.height = 768;
+        this.clientQty = 0;
+        this.prepareSvg(data);
+        this.runSimulation();
+
         // this.staticForce(data);
-        this.simulationForce(data);
         // this.oldSchoolForce(data)
-	}
-	getData() {
-		const data = d3.json("https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json");
-		return data
 	}
 	loading(svg) {
         return svg.append("text")
@@ -20,16 +21,20 @@ class Force {
             .text("Simulating. One moment please…");
 	}
   	color(d) {
-  		if(d.id !== 'Server') {
-  			return 'Blue'
-  		}
-  		return 'Green'
-  	}
-  	type(d) {
-        if(d.id !== 'Server') {
-            return 'node node--client node--client-' + d.index
+  		if(d.id === 'Server') {
+            return 'Green'
+  		} else if(d.id.indexOf('Client') > -1) {
+  		    return 'Orange'
         }
-        return 'node node--server'
+        return 'Blue'
+  	}
+  	class(d) {
+        if(d.id === 'Server') {
+            return 'node node--server'
+        } else if(d.id.indexOf('Client') > -1) {
+            return `node node--client node--client-${this.clientQty}`//todo: fix client qty
+        }
+        return `node node--main node--main-${d.index}`
 
     }
     getLineLength(d) {
@@ -58,35 +63,92 @@ class Force {
             .on("drag", dragged)
             .on("end", dragended);
     }
-    clickAction(d, width, height) {
-        if(d.id !== 'Server') {
-            Node.appendAlt(d, width, height)
+    nodeClickAction(d) {
+        d3.event.preventDefault();
+
+        if(d.id.indexOf('Client') > -1) {
+            this.appendClientAlt(d)
+        } else if (d.id.indexOf('Main') > -1) {
+            Node.appendMainAlt(d)
         }
     }
-    addNewClientNode(d, i){
-        //simulation.find() - TODO check
+    addClient(d, i) {
+        const thisId = `Client${this.clientQty}`;
+        const thisGroup = this.nodes[i].group;
+        const sourceId = this.nodes[i].id;
+        const clientsLimit = this.nodes[i].fiberQty;
+        const clientsQty = Node.getClientsQty(this.nodes, thisGroup)
 
-	    this.simulation.nodes.push({
-            id: `Client${i}`,
-            group: d.group,
-        })
+	    if(d.id.indexOf('Main') < 0 || clientsQty === clientsLimit){return}
+        // if(thisGroup){return}
+
+
+        this.nodes.push({
+            id: thisId,
+            group: thisGroup,
+        });
+
+        this.links.push({
+            source: sourceId,
+            target: thisId,
+        });
+        this.simulation.stop();
+        this.runSimulation();
     }
-  	simulationForce(data) {
-		let active = d3.select(null);
-	    const width = 920;
-        const height = 768;
+    appendClientAlt(d) {
+        let div = document.createElement("DIV")
+        let input = document.createElement("INPUT")
+        let divNode;
+        // let addBtn = document.createElement("A")
+
+        div.setAttribute("tabindex", -1);
+        input.setAttribute("tabindex", 1);
+        div.className = "node-alt";
+        div.style.top = d.y+10+'px';
+        div.style.left = d.x+10+'px';
+        div.innerHTML = Node.clientAltHTML(d.index);
+
+        Node.removeOldAlts();
+        divNode = document.body.appendChild(div);
+        divNode.focus();
+
+        // addBtn.className = "node-alt__add-fiber";
+        // addBtn.onclick = (clickEvent) => {
+        //     this.clientAddAction(clickEvent, mainNodeParams)
+        // };
+        // div.appendChild(addBtn);
+    }
+    appendMainAlt(d) {
+        let div = document.createElement("DIV")
+        let input = document.createElement("INPUT")
+        let divNode;
+        // let addBtn = document.createElement("A")
+
+        div.setAttribute("tabindex", -1);
+        input.setAttribute("tabindex", 1);
+        div.className = "node-alt";
+        div.style.top = d.y+10+'px';
+        div.style.left = d.x+10+'px';
+        div.innerHTML = Node.mainAltHTML(d.index);
+
+    }
+  	prepareSvg(data) {
         const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
-        svg.attr("width", width);
-        svg.attr("height", height);
+        svg.attr("width", this.width);
+        svg.attr("height", this.height);
         svg.attr("tabindex", 1);
-        const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  		const links = data.links.map(d => Object.create(d));
-		const nodes = data.nodes.map(d => Object.create(d));
-
-        const simulation = d3.forceSimulation(nodes)
+        this.svgGlines = svg.append("g").attr('class', 'lines');
+        this.svgGnodes = svg.append("g").attr('class', 'nodes');
+        this.nodes = data.nodes;
+        this.links = data.links;
+  	}
+  	runSimulation() {
+        const simulation = d3.forceSimulation(this.nodes)
             .force("charge", d3.forceManyBody().strength(-100))
-            .force("link", d3.forceLink(links).id(d => d.id).distance(50))
+            .force("centering", d3.forceCenter(this.width/2, this.height/2))
+            // .force("collision",d3.forceCollide(40).strength(0.1))
+            .force("link", d3.forceLink(this.links).id(d => d.id).distance(50).strength(0.1))
             .stop();
         this.simulation = simulation;
 
@@ -94,36 +156,35 @@ class Force {
             simulation.tick();
         }
 
-        const link = g.append("g")
-            .attr("stroke", "#000")
+        const link = this.svgGlines
             .selectAll("line")
-            .data(links)
+            .data(this.links)
             .join("line")
+            .attr("stroke", '#000')
             .attr("x1", d => d.source.x)
             .attr("y1", d => d.source.y)
             .attr("x2", d => d.target.x)
             .attr("y2", d => d.target.y)
-            .attr("length", d => this.getLineLength(d))
-        ;
+            .attr("length", d => this.getLineLength(d));
 
-        const node = g.append("g")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1)
+        const node = this.svgGnodes
             .selectAll("circle")
-            .data(nodes)
+            .data(this.nodes)
             .join("circle")
             .attr("r", 10)
             .attr("fill", this.color)
-            .attr("class", this.type)
+            .attr("class", this.class)
             .attr("id", d => d.id)
             .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
-            .on("click", d => this.clickAction(d, width, height))
+            .attr("fiberQty", d => d.fiberQty)
+            .on("dblclick", (d, i) => this.addClient(d, i))
+            .on("contextmenu", d => this.nodeClickAction(d, this.width, this.height))
             .call(this.dragAction(simulation));
 
-        node.append("title")
-            .text(d => d.id);
+        // node.append("title")
+        //     .text(d => d.id);
 
         // link.append("title")
         //     .text(d => d.id)
@@ -140,7 +201,7 @@ class Force {
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y);
         });
-  	}
+    }
     staticForce() {
         const svg = d3.select("svg").attr("width", 600).attr("height", 600),
             width = +svg.attr("width"),

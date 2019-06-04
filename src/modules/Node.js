@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 class Node {
     clickHandler(clickEvent){
         let coords = {
@@ -7,41 +9,53 @@ class Node {
 
         this.appendAlt(coords, clickEvent.toElement.attributes)
     }
-    static appendAlt(d, svgWidth, svgHeight) {
-        let div = document.createElement("DIV")
-        let input = document.createElement("INPUT")
-        let addBtn = document.createElement("A")
-
-        div.setAttribute("tabindex", -1);
-        input.setAttribute("tabindex", 1);
-        div.className = "node-alt";
-        addBtn.className = "node-alt__add-fiber";
-        addBtn.onclick = Node.fiberAddAction;
-        div.style.top = d.y+10+'px';
-        div.style.left = d.x+10+'px';
-        div.style.transform = `translate(${svgWidth/2}px, ${svgHeight/2}px)`;
-        div.innerHTML = Node.nodeText(d.index);
-        div.appendChild(addBtn);
-        Node.removeOldAlts();
-        let divNode = document.body.appendChild(div);
-        divNode.focus();
-    }
     static removeOldAlts() {
-        let altNode = document.querySelector('.node-alt');
+        let altNode = document.querySelector('.node-alt')
         if(altNode) {
-            document.body.removeChild(altNode);
+            document.body.removeChild(altNode)
         }
     }
-    static nodeText(index, fiberQty = 4){
+    static appendMainAlt(d) {
+        Node.removeOldAlts();
+
+        d3.select('body')
+            .append('div')
+                .attr('class', 'node-alt')
+                .attr('tabindex', -1)
+                .attr('style', `top: ${d.y+10}px; left: ${d.x+10}px`)
+                .html(`<h3>Настройка магистрали</h3><p>Магистраль №${d.index}</p>`)
+            .append('p')
+            .append('input')
+                .attr('value', d.fiberQty)
+                .attr('type', 'number')
+                .attr('class', 'node-alt__input')
+                .attr('step', 4)
+                .attr('tabindex', 1)
+                .on('change', function (changeEvent) {
+                    Node.nodeChangeFiber(d, this.value)
+                })
+
+        d3.select('.node-alt').node().focus();
+    }
+    static nodeChangeFiber(d, newFiberQty) {
+        d3.select(`#${d.id}`).attr('fiberQty', newFiberQty);
+    }
+    static clientAltHTML(index) {
         return `
-            <h3>Настройка магистрали</h3>
-            <p>Магистраль №${index}</p>
-            <p>Количество жил: <input value="${fiberQty}" type="number" class="node-alt__input" pattern="" step="4"/></p>
+            <h3>Сведения клиента</h3>
+            <p>Клиент №${index}</p>
         `
     }
-    static fiberAddAction(clickEvent) {
-        clickEvent.preventDefault();
-        console.log(clickEvent.target)
+    static getClientsQty(nodes, group) {
+        let result = []
+
+        nodes.forEach((el) => {
+            if (el.group === group && el.id.indexOf('Main') === -1) {
+                result.push(el)
+            }
+        })
+
+        return result.length
     }
 }
 
