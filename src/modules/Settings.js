@@ -6,12 +6,11 @@ class Settings {
         for(let i = 1; i < Number(mainQty) + 1; i++) {
             let currentTarget = i === 1 || topology === 'star' ? 'Server' : `Main${Number(i-1)}`;
 
-            console.log(i)
             linksArray.push({source: `Main${i}`,target: currentTarget})
-            nodesArray.push({id: `Main${i}`, group: i, fiberQty: 4, clientsQty: 0, distance: 800})
+            nodesArray.push({id: `Main${i}`, group: i, fiberQty: 4, clientsQty: 0, distance: 0.8})
 
             for(let j = 1; j < Number(clientsQty) + 1; j++) {
-                nodesArray.push({id: `Client${i}.${j}`, group: i, number: `${i}.${j}`, distance: 200})
+                nodesArray.push({id: `Client${i}.${j}`, group: i, number: `${i}.${j}`, distance: 0.2})
                 linksArray.push({source: `Main${i}`,target: `Client${i}.${j}`})
             }
         }

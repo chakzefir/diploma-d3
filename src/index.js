@@ -34,12 +34,9 @@ class App {
         this.initTools();
     }
     initTools() {
-        // this.calc = new Calc()
-
-        // document.querySelector('.tool--calc').addEventListener('click', () => {
-            // let clientsQty = document.querySelectorAll('.node--main').length;
-            // this.calc.view(clientsQty);
-        // })
+        document.querySelector('.tool--calc').addEventListener('click', () => {
+            Calc.view(Calc.getCount());
+        })
 
         document.querySelector('.tool--settings').addEventListener('click', () => {
             this.settingsModal.open();

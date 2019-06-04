@@ -31,9 +31,9 @@ class Force {
         if(d.id === 'Server') {
             return 'node node--server'
         } else if(d.id.indexOf('Client') > -1) {
-            return `node node--client node--client-${this.clientQty}`//todo: fix client qty
+            return 'node node--client'
         }
-        return `node node--main node--main-${d.index}`
+        return 'node node--main';
 
     }
     getLineLength(d) {
@@ -90,6 +90,7 @@ class Force {
             id: `Client${clientNumber}`,
             group: thisGroup,
             number: clientNumber,
+            distance: 0.2,
         });
 
         this.links.push({
@@ -169,6 +170,8 @@ class Force {
             .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
+            .attr("distance", d => d.distance)
+            .attr("group", d => d.group)
             .attr("fiberQty", d => d.fiberQty)
             .on("dblclick", (d, i) => this.addClient(d, i))
             .on("contextmenu", d => this.contextMenuAction(d, this.width, this.height))
