@@ -15,8 +15,8 @@ class Node {
                 .attr('class', 'node-alt')
                 .attr('tabindex', -1)
                 .attr('style', `top: ${d.y+10}px; left: ${d.x+10}px`)
-                .html(`<h3>Настройка магистрали</h3><p>Магистраль №${d.index}</p>`)
-            .append('p')
+                .html(`<h3>Настройка магистрали</h3><p>Магистраль №${d.group}</p>`)
+            .append('p').text('Количество волкон на магистрали: ')
             .append('input')
                 .attr('value', d.fiberQty)
                 .attr('type', 'number')
@@ -25,6 +25,18 @@ class Node {
                 .attr('tabindex', 1)
                 .on('change', function (changeEvent) {
                     Node.nodeChangeFiber(d, this.value)
+                })
+        d3.select('.node-alt')
+            .append('p')
+                .text('Расстояние от центра[м]: ')
+            .append('input')
+                .attr('value', d.distance)
+                .attr('type', 'number')
+                .attr('step', 10)
+                .attr('class', 'node-alt__input node-alt__input--distance')
+                .attr('tabindex', 2)
+                .on('change', function (changeEvent) {
+                    // console.log(this.value)
                 })
 
         d3.select('.node-alt').node().focus();

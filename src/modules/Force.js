@@ -3,7 +3,7 @@ import Node from './Node'
 
 class Force {
 	constructor (data = {}) {
-        this.width = 920;
+        this.width = 768;
         this.height = 768;
         this.prepareSvg(data);
         this.runSimulation();
@@ -99,8 +99,6 @@ class Force {
 
         this.simulation.stop();
         this.runSimulation();
-
-        return d;
     }
     appendClientAlt(d) {
         let div = document.createElement("DIV")
@@ -164,7 +162,7 @@ class Force {
             .selectAll("circle")
             .data(this.nodes)
             .join("circle")
-            .attr("r", 10)
+            .attr("r", 7)
             .attr("fill", this.color)
             .attr("class", this.class)
             .attr("id", d => d.id)
