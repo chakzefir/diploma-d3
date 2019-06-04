@@ -124,7 +124,7 @@ class Force {
         // div.appendChild(addBtn);
     }
   	prepareSvg(data) {
-        const svg = d3.select("body").append("svg").attr('class', 'map-active').on("focus", Node.removeOldAlts);
+        const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
         svg.attr("width", this.width);
         svg.attr("height", this.height);
         svg.attr("tabindex", 1);
