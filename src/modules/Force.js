@@ -3,10 +3,13 @@ import Node from './Node'
 
 class Force {
 	constructor (data = {}) {
-        // this.staticForce(data);
+        this.width = 920;
+        this.height = 768;
         this.clientQty = 0;
         this.prepareSvg(data);
         this.runSimulation();
+
+        // this.staticForce(data);
         // this.oldSchoolForce(data)
 	}
 	loading(svg) {
@@ -61,45 +64,29 @@ class Force {
             .on("end", dragended);
     }
     nodeClickAction(d) {
+        d3.event.preventDefault();
+
         if(d.id.indexOf('Client') > -1) {
             this.appendClientAlt(d)
         } else if (d.id.indexOf('Main') > -1) {
-            this.appendMainAlt(d)
+            Node.appendMainAlt(d)
         }
     }
-    clientAddAction(d, i) {
-        console.log(this.nodes[i])
-        const thisId = `Client`;
-        const thisGroup = this.nodes[i].group;
-        const sourceId = this.nodes[i].id;
-
-        this.nodes = this.nodes.concat({
-            id: thisId,
-            group: thisGroup
-        });
-
-        this.links = this.links.concat({
-            source: sourceId,
-            target: thisId
-        });
-
-        console.log(this.nodes)
-        console.log(this.links)
-
-        this.simulation.tick();
-    }
     addClient(d, i) {
-        if(d.id.indexOf('Main') < 0){return}
-
         const thisId = `Client${this.clientQty}`;
         const thisGroup = this.nodes[i].group;
         const sourceId = this.nodes[i].id;
+        const clientsLimit = this.nodes[i].fiberQty;
+        const clientsQty = Node.getClientsQty(this.nodes, thisGroup)
+
+	    if(d.id.indexOf('Main') < 0 || clientsQty === clientsLimit){return}
+        // if(thisGroup){return}
+
 
         this.nodes.push({
             id: thisId,
             group: thisGroup,
         });
-        this.clientQty+=1;
 
         this.links.push({
             source: sourceId,
@@ -144,34 +131,22 @@ class Force {
         div.style.left = d.x+10+'px';
         div.innerHTML = Node.mainAltHTML(d.index);
 
-        Node.removeOldAlts();
-        divNode = document.body.appendChild(div);
-        divNode.focus();
-
-        // addBtn.className = "node-alt__add-fiber";
-        // addBtn.onclick = (clickEvent) => {
-        //     this.clientAddAction(clickEvent, mainNodeParams)
-        // };
-        // div.appendChild(addBtn);
     }
   	prepareSvg(data) {
-	    const width = 920;
-        const height = 768;
         const svg = d3.select("body").append("svg").on("focus", Node.removeOldAlts);
-        svg.attr("width", width);
-        svg.attr("height", height);
+        svg.attr("width", this.width);
+        svg.attr("height", this.height);
         svg.attr("tabindex", 1);
 
-        this.svgG = svg.append("g")
+        this.svgGlines = svg.append("g").attr('class', 'lines');
+        this.svgGnodes = svg.append("g").attr('class', 'nodes');
         this.nodes = data.nodes;
         this.links = data.links;
   	}
   	runSimulation() {
-        const width = 920;
-        const height = 768;
         const simulation = d3.forceSimulation(this.nodes)
             .force("charge", d3.forceManyBody().strength(-100))
-            .force("centering", d3.forceCenter(width/2, height/2))
+            .force("centering", d3.forceCenter(this.width/2, this.height/2))
             // .force("collision",d3.forceCollide(40).strength(0.1))
             .force("link", d3.forceLink(this.links).id(d => d.id).distance(50).strength(0.1))
             .stop();
@@ -181,7 +156,7 @@ class Force {
             simulation.tick();
         }
 
-        const link = this.svgG
+        const link = this.svgGlines
             .selectAll("line")
             .data(this.links)
             .join("line")
@@ -192,7 +167,7 @@ class Force {
             .attr("y2", d => d.target.y)
             .attr("length", d => this.getLineLength(d));
 
-        const node = this.svgG
+        const node = this.svgGnodes
             .selectAll("circle")
             .data(this.nodes)
             .join("circle")
@@ -203,12 +178,13 @@ class Force {
             .attr("index", d => d.index)
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
+            .attr("fiberQty", d => d.fiberQty)
             .on("dblclick", (d, i) => this.addClient(d, i))
-            .on("click", d => this.nodeClickAction(d, width, height))
+            .on("contextmenu", d => this.nodeClickAction(d, this.width, this.height))
             .call(this.dragAction(simulation));
 
         // node.append("title")
-        //         .text(d => d.id);
+        //     .text(d => d.id);
 
         // link.append("title")
         //     .text(d => d.id)
