@@ -166,15 +166,15 @@ svg.map-active {
     margin-right: 30px;
 }
 
-th {
+.results__table th {
     min-width: 170px
 }
 
-.main-cell {
+.main-cell, .main-row {
     background: rgba(0, 0, 255, 0.31);
 }
 
-.client-cell {
+.client-cell, .client-row {
     background: rgba(255, 165, 0, 0.44);
     padding-left: 20px;
 }

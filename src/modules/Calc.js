@@ -20,21 +20,54 @@ class Calc {
 
         return speedLoss * length + connectionLoss * clientsQty;
     }
-    view(clientsQty) {
-        const length = this.countNodesDistance();
-        const finalCash =  this.countCash(length);
-        const loss = this.countBudget(length, clientsQty);
-        const resultNode = document.createElement("DIV");
+    static getCount() {
+        const nodeElements = document.querySelectorAll('.node:not(.node--server)');
+        const qtyOfMains = document.querySelectorAll('.node--main').length;
+        let count = {};
 
-        resultNode.classList.add('calc-result');
-        resultNode.innerHTML =
-            `<h3>Результаты рассчётов</h3>
-            Общая длинна кабеля всех магистралей: <b>${parseInt(length)}м</b><br> 
-            Примерная стоимость кабелей ~ <b>${parseInt(finalCash)}₽</b><br>
-            Количество абонентов: ${clientsQty}<br>
-            Бюджет сети составит ~ <b>${parseInt(loss)}Дб</b>`;
+        for(let i = 0; i < nodeElements.length; i++) {
+            let id = nodeElements[i].getAttribute('id');
+            let groupNumber = nodeElements[i].getAttribute('group');
+            let qtyOfClients = document.querySelectorAll(`.node--client[group="${groupNumber}"]`).length;
+            let distance = nodeElements[i].getAttribute('distance');
+            let qtyOfSameType = id.indexOf('Main') === 0 ? qtyOfMains : qtyOfClients;
 
-        document.body.appendChild(resultNode);
+            count[id] = {
+                id: id,
+                distance: distance,
+                qtyOfClients: qtyOfClients,
+                loss: Number(0.2 * distance + 0.5 * qtyOfSameType).toFixed(2)
+            }
+        }
+
+        return count;
+    }
+    static view(results) {
+        console.table(results)
+        const resultTableNode = document.createElement("TABLE");
+        const resultsContainer = document.querySelector('.results');
+        let tableHTML = '<tr><th>Идентификатор</th><th>Бюджет потерь</th><th>Расстояние</th></tr>';
+
+        for (let el in results) {
+            if(results.hasOwnProperty(el)) {
+                el = results[el];
+                if(el.id.indexOf('Main') === 0) {
+                    let groupIndex = el.id.split('Main')[1];
+                    tableHTML += `<tr class="main-row"><td class="main-cell">Магистраль №${groupIndex}</td><td>${el.loss}Дб</td><td>${el.distance}км</td></tr>`
+                } else {
+                    let groupIndex = el.id.split('Client')[1];
+                    tableHTML += `<tr class="client-row"><td class="client-cell">Абонент №${groupIndex}</td><td>${el.loss}Дб</td><td>${el.distance}км</td></tr>`
+                }
+            }
+        }
+
+        resultTableNode.classList.add('results__table');
+        resultTableNode.innerHTML =
+            `<h3>Рассчёт потерь</h3>
+            ${tableHTML}`;
+
+        resultsContainer.innerHTML = "";
+        resultsContainer.appendChild(resultTableNode);
     }
 }
 
