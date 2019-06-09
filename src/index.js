@@ -15,7 +15,7 @@ class App {
         document.forms[0].addEventListener('submit', (submitEvent) => this.formHandler(submitEvent))
 
         if(debug) {
-            new Force(Settings.dataGenerator(3))
+            new Force(Settings.dataGenerator(3, 'star', 3))
             this.initTools()
         } else {
             this.welcomeModal.open();
@@ -34,15 +34,16 @@ class App {
         this.initTools();
     }
     initTools() {
-        this.calc = new Calc()
-
         document.querySelector('.tool--calc').addEventListener('click', () => {
-            let clientsQty = document.querySelectorAll('.node--main').length;
-            this.calc.view(clientsQty);
+            Calc.view(Calc.getCount());
         })
 
         document.querySelector('.tool--settings').addEventListener('click', () => {
             this.settingsModal.open();
+        })
+
+        document.querySelector('.tool--map').addEventListener('click', () => {
+            Settings.toggleMap();
         })
     }
     clearBody() {
