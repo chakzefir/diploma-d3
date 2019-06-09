@@ -14,11 +14,12 @@ class Calc {
 
         return priceForMeter * length;
     }
-    countBudget(length, clientsQty) {
-        const speedLoss = 0.5;
+    static countBudget(distance, clientsQty) {
+        const speedLoss = 0.2;
         const connectionLoss = 0.5;
+        const result = speedLoss * distance + connectionLoss * clientsQty;
 
-        return speedLoss * length + connectionLoss * clientsQty;
+        return Number(result).toFixed(2);
     }
     static getCount() {
         const nodeElements = document.querySelectorAll('.node:not(.node--server)');
@@ -36,7 +37,7 @@ class Calc {
                 id: id,
                 distance: distance,
                 qtyOfClients: qtyOfClients,
-                loss: Number(0.2 * distance + 0.5 * qtyOfSameType).toFixed(2)
+                loss: Calc.countBudget(distance, qtyOfClients)
             }
         }
 
